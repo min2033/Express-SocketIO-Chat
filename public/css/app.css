@@ -1,0 +1,22 @@
+h1{
+	font-family:'century gothic';
+}
+#field{
+	width:40%;
+	display:inline;
+
+}
+#fieldbtn{
+	width:80px;
+	display:inline;
+}
+
+.viewer{
+	outline: rgb(34, 197, 191) inset 1px;
+	border-radius:10px;
+	margin:50px 0 50px 0;
+	padding:20px;
+}
+form{
+	margin:0;
+}
