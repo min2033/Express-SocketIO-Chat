@@ -1,10 +1,14 @@
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
+// Socket IO
 var io = require('socket.io')(server);
+// Redis DB 
 var redis = require('redis');
-
-var redisClient = redis.createClient();
+var url = require('url');
+var redisURL = url.parse(process.env.REDISCLOUD_URL);
+var redisClient = redis.createClient(redisURL.port,redisURL.hostname, {no_ready_check: true});
+redisClient.auth(redisURL.auth.split(":")[1]);
 
 redisClient.on('error',function(err){
 	console.log(err);
