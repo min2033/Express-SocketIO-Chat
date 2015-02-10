@@ -17,7 +17,7 @@ $(function(){
 	});
 	
 	socket.on('disconnect',function(){
-		sendMessage(user,' has disconnected.');
+		sendMessage(name,' has disconnected.');
 	});
 
 
@@ -25,7 +25,7 @@ $(function(){
 		e.preventDefault();
 		var field = $('input[type="text"]');
 		var msg = field.val();
-		sendMessage(user,msg);		
+		sendMessage(name,msg);		
 		field.val('');
 	});
 
