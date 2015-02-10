@@ -66,7 +66,8 @@ function storeMsg(name, msg, storage){
 
 function removeMsg(name,storage){
 	redisClient.lrem('users',-1,name,function(err,reply){
-	
+		console.log(reply);	
+		console.log(err);
 	});
 }
 
