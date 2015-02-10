@@ -34,6 +34,7 @@ io.sockets.on('connection',function(client){
 	
 	client.on('disconnect',function(){
 		console.log("user disconnected");
+		storeMsg(name,' has disconnected.');
 	});
 	
 	client.on('userMsg',function(data){
