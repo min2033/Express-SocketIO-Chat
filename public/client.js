@@ -15,12 +15,22 @@ $(function(){
 		});
 
 	});
+	
+	socket.on('disconnect',function(){
+		sendMessage(user,' has disconnected.');
+	});
+
+
 	$('#chat').on('submit',function(e){
 		e.preventDefault();
 		var field = $('input[type="text"]');
 		var msg = field.val();
-		var obj = {user:name,message:msg};
-		socket.emit('userMsg',obj);
+		sendMessage(user,msg);		
 		field.val('');
 	});
+
+	function sendMessage(user,msg){
+		var obj = {user:user,message:msg};
+		socket.emit('userMsg',obj);
+	}
 });
