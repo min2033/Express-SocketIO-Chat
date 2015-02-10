@@ -7,7 +7,7 @@ $(function(){
 		name = prompt('Name please');	
 	}
 	socket.emit('join',name);	
-	
+
 	socket.on('loadMessages',function(messages){
 		$('.viewer').find('p').remove();
 		messages.forEach(function(message){
@@ -16,11 +16,6 @@ $(function(){
 
 	});
 	
-	socket.on('disconnect',function(){
-		sendMessage(name,' has disconnected.');
-	});
-
-
 	$('#chat').on('submit',function(e){
 		e.preventDefault();
 		var field = $('input[type="text"]');

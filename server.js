@@ -29,12 +29,13 @@ io.sockets.on('connection',function(client){
 	client.on('join',function(name){
 		console.log(name + ' connected');
 		storeMsg(name,' has connected.');
+		client.name = name;
 		sendMsg(client);
 	});
 	
 	client.on('disconnect',function(){
 		console.log("user disconnected");
-		storeMsg(name,' has disconnected.');
+		storeMsg(client.name,' has disconnected.');
 	});
 	
 	client.on('userMsg',function(data){
