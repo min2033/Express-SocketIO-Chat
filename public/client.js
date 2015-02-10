@@ -16,6 +16,13 @@ $(function(){
 
 	});
 	
+	socket.on('loadUsers',function(users){
+		$('#users').find('li').remove();
+		users.forEach(function(user){
+		$('#users').prepend('<li>' + user.user + '</li>');
+		});	
+	});
+	
 	$('#chat').on('submit',function(e){
 		e.preventDefault();
 		var field = $('input[type="text"]');

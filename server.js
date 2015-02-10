@@ -28,38 +28,63 @@ io.sockets.on('connection',function(client){
 	
 	client.on('join',function(name){
 		console.log(name + ' connected');
-		storeMsg(name,' has connected.');
+		storeMsg(name,' has connected.','messages');
+		storeMsg(name,'','users');
 		client.name = name;
-		sendMsg(client);
+		sendMsg(client,'messages');
+		sendMsg(client,'users');
 	});
 	
 	client.on('disconnect',function(){
 		console.log("user disconnected");
-		storeMsg(client.name,' has disconnected.');
-		sendMsg(client);
+		storeMsg(client.name,' has disconnected.','messages');
+		removeMsg(client.name,'','users');
+		sendMsg(client,'messages');
+		sendMsg(client,'users');
 	});
 	
 	client.on('userMsg',function(data){
-		storeMsg(data.user,data.message);
-		sendMsg(client);
+		storeMsg(data.user,data.message,'messages');
+		sendMsg(client,'messages');
 	});
 
 });
 
-function storeMsg(name, msg){
-	var jsonMsg = JSON.stringify({name:name,message:msg});
-	redisClient.lpush('messages',jsonMsg,function(err,reply){
-		redisClient.ltrim('messages',0,9);
+function storeMsg(name, msg, storage){
+	if(storage === 'messages'){
+		//store messages
+		var jsonMsg = JSON.stringify({name:name,message:msg});
+		redisClient.lpush('messages',jsonMsg,function(err,reply){
+		redisClient.ltrim('messages',0,9);});
+	}else if(storage === 'users'){
+		//store user
+		var jsonMsg = JSON.stringify({user:name});
+		redisClient.lpush('users',jsonMsg,function(err,reply){
+		redisClient.ltrim('users',0,9);});
+	}
+}
+
+function removeMsg(name,storage){
+	redisClient.lrem('users',-1,name,function(err,reply){
+	
 	});
 }
 
-function sendMsg(client){
+function sendMsg(client,storage){
+	if(storage === 'messages'){
 	redisClient.lrange('messages',0,-1,function(err,data){
 		data = data.map(function(line){return line = JSON.parse(line);}).reverse();
 		// or just data = data.map(JSON.parse);
 		client.emit('loadMessages',data);
 		client.broadcast.emit('loadMessages',data);
 	});
+	}else if(storage === 'users'){
+	redisClient.lrange('users',0,-1,function(err,data){
+		data = data.map(JSON.parse);
+		client.emit('loadUsers',data);
+		client.broadcast.emit('loadUsers',data);
+	});	
+	}
 }	
 
 server.listen(app.get('port'),function(){
