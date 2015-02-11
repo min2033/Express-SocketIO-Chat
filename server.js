@@ -33,8 +33,14 @@ io.sockets.on('connection',function(client){
 		storeMsg(name,' has connected.');
 		sendMsg(client);
 		//Users
+		client.broadcast.emit('add user',name);
+		redisClient.smembers('users',function(err,names){
+			names.forEach(function(name){
+				client.emit('add user',name);
+			});
+		});
+
 		redisClient.sadd('users',name); //sets are unique data	
-		sendUser(client);
 	});
 	
 	client.on('disconnect',function(){
@@ -65,15 +71,6 @@ function sendMsg(client){
 		client.broadcast.emit('loadMessages',data);
 	});
 }	
-
-function sendUser(client){
-	redisClient.smembers('users',function(err,names){
-		names.forEach(function(name){
-			client.emit('add user',name);
-			client.broadcast.emit('add user',name);
-		});
-	});
-}
 
 server.listen(app.get('port'),function(){
 	console.log('Server is listening on port '+ app.get('port'));
