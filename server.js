@@ -28,9 +28,13 @@ io.sockets.on('connection',function(client){
 	
 	client.on('join',function(name){
 		console.log(name + ' connected');
-		storeMsg(name,' has connected.');
 		client.name = name;
+		//Messages
+		storeMsg(name,' has connected.');
 		sendMsg(client);
+		//Users
+		redisClient.sadd('users',name); //sets are unique data	
+		sendUser(client);
 	});
 	
 	client.on('disconnect',function(){
@@ -53,13 +57,6 @@ function storeMsg(name, msg){
 	redisClient.ltrim('messages',0,9);});
 }
 
-function removeMsg(name,storage){
-	redisClient.lrem('users',-1,name,function(err,reply){
-		console.log(reply);	
-		console.log(err);
-	});
-}
-
 function sendMsg(client){
 	redisClient.lrange('messages',0,-1,function(err,data){
 		data = data.map(function(line){return line = JSON.parse(line);}).reverse();
@@ -68,6 +65,15 @@ function sendMsg(client){
 		client.broadcast.emit('loadMessages',data);
 	});
 }	
+
+function sendUser(client){
+	redisClient.smembers('users',function(err,names){
+		names.forEach(function(name){
+			client.emit('add user',name);
+			client.broadcast.emit('add user',name);
+		});
+	});
+}
 
 server.listen(app.get('port'),function(){
 	console.log('Server is listening on port '+ app.get('port'));

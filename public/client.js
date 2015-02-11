@@ -16,11 +16,9 @@ $(function(){
 
 	});
 	
-	socket.on('loadUsers',function(users){
+	socket.on('add user',function(user){
 		$('#users').find('li').remove();
-		users.forEach(function(user){
-		$('#users').prepend('<li>' + user.user + '</li>');
-		});	
+		console.log(user);
 	});
 	
 	$('#chat').on('submit',function(e){
