@@ -34,11 +34,11 @@ io.sockets.on('connection',function(client){
 		sendMsg(client);
 		//Users
 		client.broadcast.emit('add user',name);
-		redisClient.smembers('users',function(err,names){
-			names.forEach(function(name){
-				client.emit('add user',name);
-			});
-		});
+//		redisClient.smembers('users',function(err,names){
+//			names.forEach(function(name){
+//				client.emit('add user',name);
+//			});
+//		});
 
 		redisClient.sadd('users',name); //sets are unique data	
 	});
