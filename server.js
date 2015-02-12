@@ -38,6 +38,7 @@ io.sockets.on('connection',function(client){
 		client.emit('add user',name);
 		client.broadcast.emit('add user',name);
 		redisClient.smembers('users',function(err,names){
+			console.log(err);
 			names.forEach(function(name){
 				client.emit('add user',name);
 			});
