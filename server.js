@@ -37,6 +37,7 @@ io.sockets.on('connection',function(client){
 		//Users
 		client.emit('add user',name);
 		client.broadcast.emit('add user',name);
+		redisClient.sadd('chatusers',name); //sets are unique data	
 		redisClient.smembers('chatusers',function(err,names){
 			console.log(err);
 			names.forEach(function(name){
@@ -44,7 +45,6 @@ io.sockets.on('connection',function(client){
 			});
 		});
 
-		redisClient.sadd('users',name); //sets are unique data	
 	});
 	
 	client.on('disconnect',function(){
