@@ -8,15 +8,17 @@ var io = require('socket.io')(server);
 // Redis DB 
 var redis = require('redis');
 var url = require('url');
-var redisURL = url.parse(process.env.REDISCLOUD_URL);
-var redisClient = redis.createClient(redisURL.port,redisURL.hostname, {no_ready_check: true});
-redisClient.auth(redisURL.auth.split(":")[1]);
+//var redisURL = url.parse(process.env.REDISCLOUD_URL);
+//var redisClient = redis.createClient(redisURL.port,redisURL.hostname, {no_ready_check: true});
+//redisClient.auth(redisURL.auth.split(":")[1]);
+
+var redisClient = redis.createClient();
 
 redisClient.on('error',function(err){
 	console.log(err);
 });
 
-app.set('port',(process.env.PORT || 5000));
+//app.set('port',(process.env.PORT || 5000));
 app.use(express.static('public'));
 
 app.get('/',function(req,res){
@@ -33,12 +35,13 @@ io.sockets.on('connection',function(client){
 		storeMsg(name,' has connected.');
 		sendMsg(client);
 		//Users
+		client.emit('add user',name);
 		client.broadcast.emit('add user',name);
-//		redisClient.smembers('users',function(err,names){
-//			names.forEach(function(name){
-//				client.emit('add user',name);
-//			});
-//		});
+		redisClient.smembers('users',function(err,names){
+			names.forEach(function(name){
+				client.emit('add user',name);
+			});
+		});
 
 		redisClient.sadd('users',name); //sets are unique data	
 	});
@@ -47,6 +50,11 @@ io.sockets.on('connection',function(client){
 		console.log("user disconnected");
 		storeMsg(client.name,' has disconnected.');
 		sendMsg(client);
+
+		client.broadcast.emit('remove user',client.name);
+		redisClient.srem('users',client.name,function(err){
+			console.log(err);
+		});
 	});
 	
 	client.on('userMsg',function(data){
@@ -72,6 +80,10 @@ function sendMsg(client){
 	});
 }	
 
-server.listen(app.get('port'),function(){
-	console.log('Server is listening on port '+ app.get('port'));
+//server.listen(app.get('port'),function(){
+//	console.log('Server is listening on port '+ app.get('port'));
+//});
+
+server.listen(8000,function(){
+	console.log('server running on 8000');
 });

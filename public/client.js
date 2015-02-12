@@ -1,7 +1,8 @@
 $(function(){
 
-	var socket = io.connect(window.location.hostname);
-	
+	//var socket = io.connect(window.location.hostname);
+	var socket = io.connect('http://localhost:8000');	
+
 	var name = '';
 	while(name === ''){
 		name = prompt('Name please');	
@@ -15,10 +16,16 @@ $(function(){
 		});
 
 	});
-	
-	socket.on('add user',function(user){
-		$('#users').find('li').remove();
-		console.log(user);
+
+	socket.on('add user', function(name){
+		var chatter = $('<li>'+name+'</li>');
+		chatter = chatter.attr('data-name',name);
+		$('#users').append(chatter);
+	});
+
+	socket.on('remove user', function(name){
+		console.log(name + ' disconnected');
+		$('#users li[data-name='+name+']').remove();
 	});
 	
 	$('#chat').on('submit',function(e){
