@@ -37,7 +37,7 @@ io.sockets.on('connection',function(client){
 		//Users
 		client.emit('add user',name);
 		client.broadcast.emit('add user',name);
-		redisClient.smembers('users',function(err,names){
+		redisClient.smembers('chatusers',function(err,names){
 			console.log(err);
 			names.forEach(function(name){
 				client.emit('add user',name);
@@ -53,7 +53,7 @@ io.sockets.on('connection',function(client){
 		sendMsg(client);
 
 		client.broadcast.emit('remove user',client.name);
-		redisClient.srem('users',client.name,function(err){
+		redisClient.srem('chatusers',client.name,function(err){
 			console.log(err);
 		});
 	});
