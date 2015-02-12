@@ -35,7 +35,6 @@ io.sockets.on('connection',function(client){
 		storeMsg(name,' has connected.');
 		sendMsg(client);
 		//Users
-		client.emit('add user',name);
 		client.broadcast.emit('add user',name);
 		redisClient.sadd('chatusers',name); //sets are unique data	
 		redisClient.smembers('chatusers',function(err,names){
