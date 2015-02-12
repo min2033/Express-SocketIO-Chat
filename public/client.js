@@ -1,7 +1,7 @@
 $(function(){
 
-	//var socket = io.connect(window.location.hostname);
-	var socket = io.connect('http://localhost:8000');	
+	var socket = io.connect(window.location.hostname);
+//	var socket = io.connect('http://localhost:8000');	
 
 	var name = '';
 	while(name === ''){

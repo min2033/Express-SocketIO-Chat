@@ -8,17 +8,17 @@ var io = require('socket.io')(server);
 // Redis DB 
 var redis = require('redis');
 var url = require('url');
-//var redisURL = url.parse(process.env.REDISCLOUD_URL);
-//var redisClient = redis.createClient(redisURL.port,redisURL.hostname, {no_ready_check: true});
-//redisClient.auth(redisURL.auth.split(":")[1]);
+var redisURL = url.parse(process.env.REDISCLOUD_URL);
+var redisClient = redis.createClient(redisURL.port,redisURL.hostname, {no_ready_check: true});
+redisClient.auth(redisURL.auth.split(":")[1]);
 
-var redisClient = redis.createClient();
+//var redisClient = redis.createClient();
 
 redisClient.on('error',function(err){
 	console.log(err);
 });
 
-//app.set('port',(process.env.PORT || 5000));
+app.set('port',(process.env.PORT || 5000));
 app.use(express.static('public'));
 
 app.get('/',function(req,res){
@@ -80,10 +80,10 @@ function sendMsg(client){
 	});
 }	
 
-//server.listen(app.get('port'),function(){
-//	console.log('Server is listening on port '+ app.get('port'));
-//});
-
-server.listen(8000,function(){
-	console.log('server running on 8000');
+server.listen(app.get('port'),function(){
+	console.log('Server is listening on port '+ app.get('port'));
 });
+
+//server.listen(8000,function(){
+//	console.log('server running on 8000');
+//});
